@@ -1,0 +1,119 @@
+<html>
+<!-- Live Telemetry Viewer -->	
+<head>
+	<script language="javascript" type="text/javascript" src="/acr/js/jquery.min.js"></script>
+	<script src="/acr/js/socket.io-1.0.4.js"></script>
+
+	<script type="text/javascript" src="/acr/js/d3/d3.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="/acr/js/d3/d3.js" charset="utf-8"></script>
+</head>
+
+<body>
+	<h1>Live Data!!!</h1>
+
+	<ul id="speed"></ul>
+	<ul id="rpm"></ul>
+	<ul id="gear"></ul>
+	<ul id="fuel"></ul>
+	<ul id="throttle"></ul>
+	<ul id="brake"></ul>
+	<ul id="water_temp"></ul>
+	<ul id="oil_temp"></ul>
+
+	<br>
+	<div id="LF">LF
+		<ul id="brake_temp"></ul>
+		<ul id="tire_pressure"></ul>
+		<ul id="ride_height"></ul>
+		<ul id="wear"></ul>
+		<ul id="tire_temp_I"></ul>
+		<ul id="tire_temp_M"></ul>
+		<ul id="tire_temp_O"></ul>
+	</div>
+	<br>
+	<div id="RF">RF
+		<ul id="brake_temp"></ul>
+		<ul id="tire_pressure"></ul>
+		<ul id="ride_height"></ul>
+		<ul id="wear"></ul>
+		<ul id="tire_temp_I"></ul>
+		<ul id="tire_temp_M"></ul>
+		<ul id="tire_temp_O"></ul>
+	</div>
+	<br>
+	<div id="LR">LR
+		<ul id="brake_temp"></ul>
+		<ul id="tire_pressure"></ul>
+		<ul id="ride_height"></ul>
+		<ul id="wear"></ul>
+		<ul id="tire_temp_I"></ul>
+		<ul id="tire_temp_M"></ul>
+		<ul id="tire_temp_O"></ul>
+	</div>
+	<br>
+	<div id="RR">RR
+		<ul id="wear"></ul>
+		<ul id="brake_temp"></ul>
+		<ul id="tire_pressure"></ul>
+		<ul id="ride_height"></ul>
+		<ul id="tire_temp_I"></ul>
+		<ul id="tire_temp_M"></ul>
+		<ul id="tire_temp_O"></ul>
+	</div>
+
+
+
+	<div class="chart"></div>
+
+
+	<script>
+		/*
+			try {
+				d3.select(".chart")
+				  .selectAll("div")
+					.data(data)
+				  .enter().append("div")
+					.style("width", function(d) { return d * 10 + "px"; })
+					.text(function(d) { return d; });
+			}
+			catch(err){
+				alert(err.message);		
+			}
+		*/
+		try {
+			var socket = io.connect('http://54.189.140.108:3000');
+			socket.on('connect', function () {
+				socket.on('data', function (msg) {
+					//var thedata = JSON.parse(msg);
+					$('#water_temp').html('<li>Water Temp:' + msg.mEngineWaterTemp.toFixed(1) + 'c</li>');
+					$('#rpm').html('<li>RPM: ' + Math.round(msg.mEngineRPM) + '</li>');
+					$('#gear').html('<li>Gear: ' + msg.mGear + '</li>');
+					$('#speed').html('<li>Speed: ' + Math.round(msg.metersPerSec * 3.6) + 'kph</li>');
+					$('#oil_temp').html('<li>Oil Temp: ' + msg.mEngineOilTemp.toFixed(1) + 'c</li>');
+					$('#fuel').html('<li>Fuel: ' + msg.mFuel.toFixed(1) + 'l</li>');
+					$('#throttle').html('<li>Throttle: ' + Math.round(msg.mUnfilterThrottle * 100) + '%</li>');
+					$('#brake').html('<li>Brake: ' + Math.round(msg.mUnfilterBrake * 100) + '%</li>');
+				});
+				socket.on('corner-data', function (msg) {
+					//var thedata = JSON.parse(msg);
+					$('#'+msg.type+' #brake_temp').html('<li>Brake Temp:' + msg.mBrakeTemp + 'c</li>');
+					$('#'+msg.type+' #tire_pressure').html('<li>Tire Pressure:' + msg.mPressure + 'c</li>');
+					$('#'+msg.type+' #ride_height').html('<li>Ride Height:' + msg.mRideHeight + 'cm</li>');
+					$('#'+msg.type+' #wear').html('<li>Wear:' + (msg.mWear * 100).toFixed(1) + '%</li>');
+					$('#'+msg.type+' #tire_temp_I').html('<li>Inside Temp:' + msg.TempI + 'c</li>');
+					$('#'+msg.type+' #tire_temp_M').html('<li>Middle Temp:' + msg.TempM + 'c</li>');
+					$('#'+msg.type+' #tire_temp_O').html('<li>Outside Temp:' + msg.TempO + 'c</li>');
+				});
+			});
+		}
+		catch(err){
+			alert(err.message + ' - Live Data Server is unavailable...');		
+		}
+		
+	</script>
+
+
+	
+
+</body>
+</html>
