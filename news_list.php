@@ -5,7 +5,7 @@
 //error_reporting(-1);
 
 
-mysql_connect("192.186.253.160", "rclient", "result_client") or die(mysql_error()); 
+mysql_connect("xxx", "xxx", "xxx") or die(mysql_error()); 
 mysql_select_db("Results") or die(mysql_error()); 
 
 
